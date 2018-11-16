@@ -11,12 +11,12 @@ import (
 )
 
 type SummonerDto struct {
+	ProfileIconID int    `json:"profileIconId"`
+	Name          string `json:"name"`
+	SummonerLevel int    `json:"summonerLevel"`
+	RevisionDate  int64  `json:"revisionDate"`
 	ID            int    `json:"id"`
 	AccountID     int    `json:"accountId"`
-	Name          string `json:"name"`
-	ProfileIconID int    `json:"profileIconId"`
-	RevisionDate  int64  `json:"revisionDate"`
-	SummonerLevel int    `json:"summonerLevel"`
 }
 
 type MatchListDto struct {
@@ -30,9 +30,9 @@ type MatchListDto struct {
 		Role       string `json:"role"`
 		Season     int    `json:"season"`
 	} `json:"matches"`
-	EndIndex   int `json:"endIndex"`
-	StartIndex int `json:"startIndex"`
 	TotalGames int `json:"totalGames"`
+	StartIndex int `json:"startIndex"`
+	EndIndex   int `json:"endIndex"`
 }
 
 // For out of testing use, when not using a temp dev key.
@@ -44,7 +44,7 @@ func MatchListCaller(sumName string) MatchListDto {
 		log.Fatal("Error loading .env file")
 	}
 	apiKey := os.Getenv("RIOT_API_KEY")
-	url := "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/Starfirephoenix"
+	url := fmt.Sprintf("https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/%s", sumName)
 	request, _ := http.NewRequest("GET", url, nil)
 	request.Header.Set("X-Riot-Token", apiKey)
 
@@ -59,7 +59,7 @@ func MatchListCaller(sumName string) MatchListDto {
 		log.Fatalf("Error reading json body: %s", err)
 	}
 	var summdto SummonerDto
-	fmt.Println(string(data))
+	//fmt.Println(string(data))
 
 	if err := json.Unmarshal(data, &summdto); err != nil {
 		log.Fatalf("Error unmarshaling json: %s", err)
@@ -74,7 +74,7 @@ func MatchListCaller(sumName string) MatchListDto {
 	if err != nil {
 		log.Fatalf("Error reading json body: %s", err)
 	}
-	fmt.Println(string(data))
+	//fmt.Println(string(data))
 	var matchList MatchListDto
 	if err := json.Unmarshal(data, &matchList); err != nil {
 		log.Fatalf("Error unmarshaling json: %s", err)
